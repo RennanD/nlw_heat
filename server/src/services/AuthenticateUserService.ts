@@ -21,8 +21,6 @@ export class AuthenticateUserService {
   async run({ code }: IRequest): Promise<unknown> {
     const url = `${githubConfig.auth_url}/access_token`;
 
-    console.log(code);
-
     const { data: accessTokenResponse } =
       await axios.post<IAccessTokenResponse>(url, null, {
         params: {
