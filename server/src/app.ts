@@ -1,7 +1,8 @@
 import 'dotenv/config';
-
+import 'express-async-errors';
 import express from 'express';
 import { routes } from './routes';
+import { handleException } from './middlewares/handleException';
 
 const app = express();
 
@@ -12,5 +13,6 @@ app.get('/', (request, response) => {
 });
 
 app.use(routes);
+app.use(handleException);
 
 export { app };
