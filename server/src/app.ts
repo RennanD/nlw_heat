@@ -8,6 +8,4 @@ app.get('/', (request, response) => {
   return response.json({ message: 'Hello' });
 });
 
-app.listen(4000, () => {
-  console.log('Server is runing 🚀');
-});
+export { app };
