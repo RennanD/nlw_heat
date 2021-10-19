@@ -1,4 +1,5 @@
 import { prismaClient } from '../prisma';
+import { io } from '../socket';
 
 interface IRequest {
   content: string;
@@ -31,6 +32,18 @@ export class CreateMessagesService {
         user: true,
       },
     });
+
+    const infoWebsocket = {
+      content: message.content,
+      user_id: message.user_id,
+      created_at: message.created_at,
+      user: {
+        name: message.user.name,
+        avatar_url: message.user.avatar_url,
+      },
+    };
+
+    io.emit('new_message', infoWebsocket);
 
     return message;
   }
