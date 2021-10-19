@@ -2,6 +2,8 @@ import axios from 'axios';
 
 import githubConfig from '../config/github';
 
+import { prismaClient } from '../prisma';
+
 interface IRequest {
   code: string;
 }
@@ -38,6 +40,25 @@ export class AuthenticateUserService {
         authorization: `Bearer ${accessTokenResponse.access_token}`,
       },
     });
+
+    const { login, id, avatar_url, name } = response.data;
+
+    let user = await prismaClient.user.findFirst({
+      where: {
+        github_id: id,
+      },
+    });
+
+    if (!user) {
+      user = await prismaClient.user.create({
+        data: {
+          name,
+          avatar_url,
+          login,
+          github_id: id,
+        },
+      });
+    }
 
     return response.data;
   }
