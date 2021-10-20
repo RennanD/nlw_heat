@@ -13,6 +13,7 @@ type User = {
 type AuthContextData = {
   user: User | null
   signInUrl: string;
+  singOut: () => void;
 }
 
 type AuthProviderProps = {
@@ -45,6 +46,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
     localStorage.setItem('@nlw_heat:token', token);
 
     setUser(userResponse);
+  }
+
+  async function singOut() {
+    setUser(null);
+    localStorage.removeItem('@nlw_heat:token');
   }
 
   useEffect(() => {
@@ -80,6 +86,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   return (
     <AuthContext.Provider value={{
       user,
+      singOut,
       signInUrl: 'https://github.com/login/oauth/authorize?scope=user&client_id=b224abb3597bc5eeb277&redirect_uri=http://localhost:3000',
     }}
     >
