@@ -38,7 +38,7 @@ export function MessagesList(): JSX.Element {
   }, []);
 
   useEffect(() => {
-    const timer = setInterval(() => {
+    setInterval(() => {
       if (messagesQueue.length) {
         setMessages(oldState =>
           [messagesQueue[0], oldState[0], oldState[1]].filter(Boolean),
