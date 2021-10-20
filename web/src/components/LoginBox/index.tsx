@@ -5,9 +5,7 @@ import styles from './styles.module.scss';
 import { useAuth } from '../../hooks/auth';
 
 export function LoginBox(): JSX.Element {
-  const { signInUrl, user } = useAuth();
-
-  console.log(user);
+  const { signInUrl } = useAuth();
 
   return (
     <div className={styles.loginBoxWrapper}>

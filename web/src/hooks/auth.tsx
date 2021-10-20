@@ -1,40 +1,38 @@
-import React, {
-  createContext, useContext, useEffect, useState,
-} from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { api } from '../services/api';
 
 type User = {
   id: string;
   name: string;
   login: string;
-  avatar_url: string
-}
+  avatar_url: string;
+};
 
 type AuthContextData = {
-  user: User | null
+  user: User | null;
   signInUrl: string;
   singOut: () => void;
-}
+};
 
 type AuthProviderProps = {
-  children: React.ReactNode
-}
+  children: React.ReactNode;
+};
 
 type AxiosResponse = {
   result: {
     token: string;
     user: User;
-  }
-}
+  };
+};
 
 type ProfileResponse = {
   user: User;
-}
+};
 
 const AuthContext = createContext({} as AuthContextData);
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const [user, setUser] = useState<User |null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   async function singIn(github_code: string) {
     const response = await api.post<AxiosResponse>('/signin/authenticate', {
@@ -44,6 +42,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const { token, user: userResponse } = response.data.result;
 
     localStorage.setItem('@nlw_heat:token', token);
+    api.defaults.headers.common.authorization = `Bearer ${token}`;
 
     setUser(userResponse);
   }
@@ -72,23 +71,27 @@ export function AuthProvider({ children }: AuthProviderProps) {
     if (token) {
       api.defaults.headers.common.authorization = `Bearer ${token}`;
 
-      api.get<ProfileResponse>('/profile', {
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
-      }).then((response) => {
-        const { user: profile } = response.data;
-        setUser(profile);
-      });
+      api
+        .get<ProfileResponse>('/profile', {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        })
+        .then(response => {
+          const { user: profile } = response.data;
+          setUser(profile);
+        });
     }
   }, []);
 
   return (
-    <AuthContext.Provider value={{
-      user,
-      singOut,
-      signInUrl: 'https://github.com/login/oauth/authorize?scope=user&client_id=b224abb3597bc5eeb277&redirect_uri=http://localhost:3000',
-    }}
+    <AuthContext.Provider
+      value={{
+        user,
+        singOut,
+        signInUrl:
+          'https://github.com/login/oauth/authorize?scope=user&client_id=b224abb3597bc5eeb277&redirect_uri=http://localhost:3000',
+      }}
     >
       {children}
     </AuthContext.Provider>
